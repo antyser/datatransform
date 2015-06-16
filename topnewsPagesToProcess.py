@@ -4,10 +4,11 @@ from kafka.common import MessageSizeTooLargeError
 import json,logging, time
 
 
-def fetchFrom(kafka_host):
-    kafka = KafkaClient(kafka_host)
-    consumer = SimpleConsumer(kafka, 'fetcher', 'toppage.pages')
-    producer = SimpleProducer(kafka)
+def fetchFrom():
+    in_kafka = KafkaClient('172.31.10.154:909')
+    consumer = SimpleConsumer(in_kafka, 'fetcher', 'toppage.pages', max_buffer_size=20*1024*1024)
+    out_kafka = KafkaClient("172.31.1.70:9092")
+    producer = SimpleProducer(out_kafka)
 
     for msg in consumer:
         page = json.loads(msg.message.value)
@@ -23,12 +24,10 @@ def fetchFrom(kafka_host):
         except MessageSizeTooLargeError as err:
             logging.warning(err)
 
-    kafka.close()
+    in_kafka.close()
+    out_kafka.close()
 
 
 if __name__ == '__main__':
     logging.basicConfig(file='data.log', level=logging.INFO)
-
-    kafka_host = '172.31.1.70:9092'
-
-    fetchFrom(kafka_host)
+    fetchFrom()
