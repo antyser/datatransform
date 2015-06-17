@@ -6,7 +6,7 @@ import json,logging, time
 
 def fetchFrom():
     in_kafka = KafkaClient('172.31.10.154:9092')
-    consumer = SimpleConsumer(in_kafka, 'fetcher', 'toppage.pages', max_buffer_size=20*1024*1024)
+    consumer = SimpleConsumer(in_kafka, 'fetcher', 'cpp.pages', max_buffer_size=20*1024*1024)
     out_kafka = KafkaClient("172.31.1.70:9092")
     producer = SimpleProducer(out_kafka)
 
@@ -20,7 +20,7 @@ def fetchFrom():
         output['content']=page['content']
         try:
             producer.send_messages("process", json.dumps(output))
-            logging.log("pump url", output['url'])
+            print("pump url" + output['url'])
         except MessageSizeTooLargeError as err:
             logging.warning(err)
 
