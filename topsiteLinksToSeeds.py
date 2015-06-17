@@ -14,7 +14,7 @@ def fetchFrom(kafka_host):
             seed = {}
             seed['url'] = url
             seed['ts_task'] = int(time.time())
-            seed['label'] = 'toppage'
+            seed['label'] = 'cpp'
             beanstalk.put(json.dumps(seed), priority=2)
 
     kafka.close()

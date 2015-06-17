@@ -5,7 +5,7 @@ import json,logging, time
 
 
 def fetchFrom():
-    in_kafka = KafkaClient('172.31.10.154:909')
+    in_kafka = KafkaClient('172.31.10.154:9092')
     consumer = SimpleConsumer(in_kafka, 'fetcher', 'toppage.pages', max_buffer_size=20*1024*1024)
     out_kafka = KafkaClient("172.31.1.70:9092")
     producer = SimpleProducer(out_kafka)
@@ -15,7 +15,7 @@ def fetchFrom():
         output = {}
         output['inlink']=''
         output['level']=1
-        output['url']=page['orig_url']
+        output['url']=page['url']
         output['fts']=page['ts_fetch']
         output['content']=page['content']
         try:
