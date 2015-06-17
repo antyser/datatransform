@@ -32,7 +32,7 @@ if __name__ == '__main__':
 
     for msg in consumer:
         tweet_info = json.loads(msg.message.value)
-        for tiny_url in tweet_info['tiny_urls']:
+        for tiny_url in tweet_info['twitter_meta']['tiny_urls']:
             if is_dup(tiny_url):
                 continue
             seed = {}
