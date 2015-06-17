@@ -16,7 +16,7 @@ DEDUP_HOST = '172.31.10.154:5000'
 def is_dup(url):
     query = "http://" + DEDUP_HOST + "/urls/?url=" + url
     try:
-        response = urllib2.urlopen('http://python.org/')
+        response = urllib2.urlopen(query)
         return True
     except urllib2.HTTPError as e:
         return False
