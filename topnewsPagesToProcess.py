@@ -3,6 +3,12 @@ from kafka import SimpleProducer, KafkaClient, SimpleConsumer
 from kafka.common import MessageSizeTooLargeError
 import json,logging, time
 
+#cpp.pages -> process
+
+IN_KAFKA_HOST = '172.31.10.154:9092'
+CONSUMER_TOPIC = 'topsite.links'
+OUT_KAFKA_HOST = '172.31.1.70:9092'
+PRODUCER_TOPIC='process'
 
 def fetchFrom():
     in_kafka = KafkaClient('172.31.10.154:9092')
