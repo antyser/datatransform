@@ -18,6 +18,9 @@ def fetchFrom():
 
     for msg in consumer:
         page = json.loads(msg.message.value)
+	if 'retweet' in page['meta']:
+	    print "remove twitter page"
+	    continue
         output = {}
         output['inlink']=''
         output['level']=1
