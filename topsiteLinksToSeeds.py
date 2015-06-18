@@ -1,16 +1,17 @@
 __author__ = 'junliu'
 from kafka import SimpleProducer, KafkaClient, SimpleConsumer
-import json,logging, time
+import json, logging, time
 import urllib2
 import beanstalkc
 
-#topsite.links -> seeds
+# topsite.links -> seeds
 
 CONSUMER_TOPIC = 'topsite.links'
 KAFKA_HOST = '172.31.10.154:9092'
 BEANSTALK_HOST = '172.31.10.154'
 BEANSTALK_PORT = 11300
 DEDUP_HOST = '172.31.10.154:5000'
+
 
 def is_dup(url):
     query = "http://" + DEDUP_HOST + "/urls/?url=" + url
@@ -19,6 +20,7 @@ def is_dup(url):
         return True
     except urllib2.HTTPError as e:
         return False
+
 
 if __name__ == '__main__':
     print 'USAGE:  python genSeedTopSite.py'
@@ -30,18 +32,18 @@ if __name__ == '__main__':
 
     for msg in consumer:
         topsites = json.loads(msg.message.value)
+        rank = 0
         for url in topsites['links']:
+            rank += 1
             if is_dup(url):
-		print "duplicate url " + url
+                print "duplicate url " + url
                 continue
             seed = {}
             seed['url'] = url
             seed['ts_task'] = int(time.time())
             seed['label'] = 'cpp'
+            seed['meta'] = {'source': 'topsite', 'category': topsites['category'], 'rank': rank, 'weight': 1}
+            seed['inlink'] = topsites['url']
             beanstalk.put(json.dumps(seed), priority=2)
             print url
     kafka.close()
-
-
-
-

@@ -39,8 +39,8 @@ if __name__ == '__main__':
             seed['ts_task'] = int(time.time())
             seed['label'] = 'cpp'
             seed['meta'] = tweet_info['twitter_meta']
-            seed['meta']['inlink'] = tweet_info['url']
-            seed['meta']['level'] = 1
+            seed['meta']['source'] = 'twitter'
+            seed['inlink'] = tweet_info['url']
             print seed
             beanstalk.put(json.dumps(seed), priority=3)
 
