@@ -38,10 +38,11 @@ if __name__ == '__main__':
             if is_dup(url):
                 print "duplicate url " + url
                 continue
+            print url
             seed = {}
             seed['url'] = url
             seed['ts_task'] = int(time.time())
-            seed['label'] = 'cpp'
+            seed['label'] = 'feedly'
             if 'meta' in feedly:
                 level = feedly['meta']['level'] + 1
             else:
@@ -49,5 +50,4 @@ if __name__ == '__main__':
             seed['meta'] = {'source': 'feedly', 'category': topic, 'level': level}
             seed['inlink'] = feedly['url']
             beanstalk.put(json.dumps(seed), priority=2)
-            print url
     kafka.close()
