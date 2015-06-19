@@ -34,6 +34,8 @@ if __name__ == '__main__':
     for msg in consumer:
         page = json.loads(msg.message.value)
         feedly = json.loads(page['content'])
+        if not 'related' in feedly:
+            continue
         for topic in feedly['related']:
             url = 'http://cloud.feedly.com/v3/search/feeds?count=500&locale=en&query=' + urllib.quote_plus(topic)
             if is_dup(url):
