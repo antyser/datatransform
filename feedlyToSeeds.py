@@ -5,9 +5,9 @@ import urllib2
 import beanstalkc
 import urllib
 
-# topsite.links -> seeds
+# feedly.pages -> seeds
 
-CONSUMER_TOPIC = 'topsite.links'
+CONSUMER_TOPIC = 'feedly.pages'
 KAFKA_HOST = '172.31.10.154:9092'
 BEANSTALK_HOST = '172.31.10.154'
 BEANSTALK_PORT = 11300
@@ -32,7 +32,8 @@ if __name__ == '__main__':
     consumer = SimpleConsumer(kafka, 'fetcher', CONSUMER_TOPIC)
 
     for msg in consumer:
-        feedly = json.loads(msg.message.value)['content']
+        page = json.loads(msg.message.value)
+        feedly = json.loads(page['content'])
         for topic in feedly['related']:
             url = 'http://cloud.feedly.com/v3/search/feeds?count=500&locale=en&query=' + urllib.quote_plus(topic)
             if is_dup(url):
@@ -48,6 +49,6 @@ if __name__ == '__main__':
             else:
                 level = 1
             seed['meta'] = {'source': 'feedly', 'category': topic, 'level': level}
-            seed['inlink'] = feedly['url']
+            seed['inlink'] = page['url']
             beanstalk.put(json.dumps(seed), priority=2)
     kafka.close()
