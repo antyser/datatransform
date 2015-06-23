@@ -1,7 +1,7 @@
 __author__ = 'junliu'
 from kafka import SimpleProducer, KafkaClient, SimpleConsumer
 import json, logging, time
-import urllib2
+import requests
 import beanstalkc
 
 # topsite.links -> seeds
@@ -10,15 +10,19 @@ CONSUMER_TOPIC = 'topsite.links'
 KAFKA_HOST = '172.31.10.154:9092'
 BEANSTALK_HOST = '172.31.10.154'
 BEANSTALK_PORT = 11300
-DEDUP_HOST = '172.31.16.133:5000'
+DEDUP_HOST = '172.31.10.154:5000'
 
 
 def is_dup(url):
-    query = "http://" + DEDUP_HOST + "/urls/?url=" + url
+    query = "http://" + DEDUP_HOST + "/urls/"
+    data = {'add': url}
     try:
-        response = urllib2.urlopen(query)
-        return True
-    except urllib2.HTTPError as e:
+        response = requests.post(query, data=data)
+        if len(response.text) == 0:
+            return False
+        else:
+            return True
+    except Exception as e:
         return False
 
 
