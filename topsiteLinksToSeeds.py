@@ -10,7 +10,7 @@ CONSUMER_TOPIC = 'topsite.links'
 KAFKA_HOST = '172.31.10.154:9092'
 BEANSTALK_HOST = '172.31.10.154'
 BEANSTALK_PORT = 11300
-DEDUP_HOST = '172.31.10.154:5000'
+DEDUP_HOST = '172.31.16.133:5000'
 
 
 def is_dup(url):
@@ -36,7 +36,7 @@ if __name__ == '__main__':
         for url in topsites['links']:
             rank += 1
             if is_dup(url):
-                print "duplicate url " + url
+                print str(time.time()) + " duplicate url " + url
                 continue
             seed = {}
             seed['url'] = url
@@ -45,5 +45,5 @@ if __name__ == '__main__':
             seed['meta'] = {'source': 'topsite', 'category': topsites['category'], 'rank': rank, 'weight': 1}
             seed['inlink'] = topsites['url']
             beanstalk.put(json.dumps(seed), priority=2)
-            print url
+            print str(time.time()) + " topsite:  " + url
     kafka.close()

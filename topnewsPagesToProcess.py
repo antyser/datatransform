@@ -6,7 +6,7 @@ import json,logging, time
 #cpp.pages -> process
 
 IN_KAFKA_HOST = '172.31.10.154:9092'
-CONSUMER_TOPIC = 'topsite.links'
+CONSUMER_TOPIC = 'cpp.pages'
 OUT_KAFKA_HOST = '172.31.1.70:9092'
 PRODUCER_TOPIC='process'
 
@@ -29,7 +29,7 @@ def fetchFrom():
         output['content']=page['content']
         try:
             producer.send_messages("process", json.dumps(output))
-            print("pump url" + output['url'])
+            print(str(time.time()) + " pump url " + output['url'])
         except MessageSizeTooLargeError as err:
             logging.warning(err)
 
