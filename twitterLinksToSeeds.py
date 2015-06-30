@@ -1,7 +1,7 @@
 __author__ = 'junliu'
 from kafka import SimpleProducer, KafkaClient, SimpleConsumer
 import json,logging, time
-import urllib2
+import requests
 import beanstalkc
 
 #{"ts_fetch":1434378838,"url":"http://twitter.com/aaronmoskowitz","label":"twitter","ts_task":1434378785,"twitter_meta":{"tweet_id":"483069698309763073","retweet":0,"favorite":1,"pubdate":1404007765,"text":"This is how I spent last week... pic.twitter.com/2UDhGgs6Uj","tiny_urls":[]},"ts_parse":1434502721}
@@ -13,12 +13,17 @@ BEANSTALK_PORT = 11300
 DEDUP_HOST = '172.31.16.133:5000'
 
 def is_dup(url):
-    query = "http://" + DEDUP_HOST + "/urls/?url=" + url
+    query = "http://" + DEDUP_HOST + "/urls/"
+    data = {'add': url}
     try:
-        response = urllib2.urlopen(query)
-        return True
+        response = requests.post(query, data=data)
+        if len(response.text) == 0:
+            return False
+        else:
+            return True
     except Exception as e:
         return False
+
 
 if __name__ == '__main__':
     print 'USAGE:  python twitterLinksToSeeds.py'
