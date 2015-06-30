@@ -49,5 +49,5 @@ if __name__ == '__main__':
             seed['meta'] = {'source': 'topsite', 'category': topsites['category'], 'rank': rank, 'weight': 1}
             seed['inlink'] = topsites['url']
             beanstalk.put(json.dumps(seed), priority=2)
-            print str(time.time()) + " topsite:  " + url
+            print str(time.time()) + " topsite:  " + url.encode('utf-8')
     kafka.close()
