@@ -8,7 +8,7 @@ import urllib
 KAFKA_HOST = '172.31.10.154:9092'
 BEANSTALK_HOST = '172.31.10.154'
 BEANSTALK_PORT = 11300
-DEDUP_HOST = '172.31.16.133:5000'
+DEDUP_HOST = '172.31.16.133:8000'
 
 def is_dup(url):
     query = "http://" + DEDUP_HOST + "/urls/"
