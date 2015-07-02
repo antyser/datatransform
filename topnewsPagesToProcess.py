@@ -29,7 +29,7 @@ def fetchFrom():
         output['content']=page['content']
         try:
             producer.send_messages("process", json.dumps(output))
-            print(str(time.time()) + " pump url " + output['url'])
+            print(str(time.time()) + " pump url " + output['url'].encode('utf-8'))
         except MessageSizeTooLargeError as err:
             logging.warning(err)
 
