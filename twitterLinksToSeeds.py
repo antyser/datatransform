@@ -13,7 +13,7 @@ BEANSTALK_PORT = 11300
 DEDUP_HOST = '172.31.16.133:8000'
 
 def is_dup(url):
-    query = "http://" + DEDUP_HOST + "/urls/"
+    query = "http://" + DEDUP_HOST + "/urls"
     data = {'add': url}
     try:
         response = requests.post(query, data=data)
@@ -37,16 +37,16 @@ if __name__ == '__main__':
         tweet_info = json.loads(msg.message.value)
         for tiny_url in tweet_info['twitter_meta']['tiny_urls']:
             if is_dup(tiny_url):
-                print "url duplicated " + tiny_url
+                print str(time.time()) + "url duplicated " + tiny_url.encode('utf-8')
                 continue
             seed = {}
             seed['url'] = tiny_url
             seed['ts_task'] = int(time.time())
-            seed['label'] = 'cpp'
+            seed['label'] = 'twittercpp'
             seed['meta'] = tweet_info['twitter_meta']
             seed['meta']['source'] = 'twitter'
             seed['inlink'] = tweet_info['url']
-            print seed
+            print str(time.time()) + json.dumps(seed).encode('utf-8')
             beanstalk.put(json.dumps(seed), priority=3)
 
     kafka.close()

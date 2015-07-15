@@ -14,7 +14,7 @@ DEDUP_HOST = '172.31.10.154:8000'
 
 
 def is_dup(url):
-    query = "http://" + DEDUP_HOST + "/urls/"
+    query = "http://" + DEDUP_HOST + "/urls"
     data = {'add': url}
     try:
         response = requests.post(query, data=data)
