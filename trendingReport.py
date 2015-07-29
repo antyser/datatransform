@@ -1,3 +1,4 @@
+# coding=utf-8
 import datetime
 from kafka import KafkaClient, SimpleConsumer
 import json,logging, time, os, sys
@@ -16,9 +17,6 @@ def dumpTsv(query, filename):
                 file.write('\t'.join(key) + "\t")
                 file.write(line + "\n")
 
-
-
-
 def fetchFrom():
     in_kafka = KafkaClient(IN_KAFKA_HOST)
     consumer = SimpleConsumer(in_kafka, CONSUMER_GROUP, CONSUMER_TOPIC, max_buffer_size=20*1024*1024)
@@ -28,7 +26,7 @@ def fetchFrom():
         for msg in consumer:
             try:
                 record = json.loads(msg.message.value)
-                stream = record["stream"]
+                stream = record["stream"].encode()
                 rank = str(record["metadata"]["trending_rank"])
                 source = record["metadata"]["trending_source"]
                 word = record["metadata"]["trending_word"]
@@ -44,3 +42,5 @@ def fetchFrom():
             except Exception as e:
                 logging.warning(e)
         time.sleep(100)
+
+fetchFrom()
