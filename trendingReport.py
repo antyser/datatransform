@@ -1,13 +1,10 @@
 # coding=utf-8
-import datetime
 from kafka import KafkaClient, SimpleConsumer
-import json,logging, time, os, sys
-
-#cpp.pages -> process
+import json,logging, os, sys
 
 IN_KAFKA_HOST = '172.31.20.238:9092'
-CONSUMER_TOPIC = 'trends'
-CONSUMER_GROUP = 'trends_report_test'
+CONSUMER_TOPIC = 'schedule'
+CONSUMER_GROUP = 'trends_counter'
 
 
 def dumpTsv(query, filename):
@@ -22,25 +19,20 @@ def fetchFrom():
     consumer = SimpleConsumer(in_kafka, CONSUMER_GROUP, CONSUMER_TOPIC, max_buffer_size=20*1024*1024)
     query = {}
     while True:
-        current = int(time.time()) - 100
         for msg in consumer:
             try:
                 record = json.loads(msg.message.value)
+                if "tags" not in record or "_trends" not in record["tags"]:
+                    continue
                 stream = record["stream"].encode()
                 rank = str(record["metadata"]["trending_rank"])
                 source = record["metadata"]["trending_source"]
                 word = record["metadata"]["trending_word"]
-                links = []
-                for link in record["links"]:
-                    links.append(word + '\t' + str(link["metadata"]["linkrank"]) + '\t' + link["url"])
-                t = (stream, source, rank)
-                query[t] = links
-                if current < record["timestamp"]:
-                    filename = datetime.datetime.fromtimestamp(current).strftime('%Y-%m-%d_%H:%M:%S')
-                    dumpTsv(query, os.path.join(sys.argv[1],filename))
-                    break
+                ts = record["metadata"]["trending_time"]
+                with open(os.path.join(sys.argv[1], str(ts)), 'w+') as out:
+                    for link in record["links"]:
+                        out.write(stream + '\t' + rank + '\t' + source + '\t' + word + '\t')
+                        out.write(str(link["metadata"]["linkrank"]) + '\t' + link["url"].encode('utf-8') + '\n')
             except Exception as e:
                 logging.warning(e)
-        time.sleep(100)
-
 fetchFrom()
